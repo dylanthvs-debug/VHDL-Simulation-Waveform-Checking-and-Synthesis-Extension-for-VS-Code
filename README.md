@@ -4,7 +4,6 @@ Developmental Project that allows VHDL Code to be simulated within an extension 
 
 
 ## Project 4A: Open Tools Workflow - GHDL & Surfer
-## Description:
 Project 4A seeks to create an extension in Visual Studio Code.
 This extension will perform simulations for VHDL Code.
 This extension will perform similarly to GHDL for simulations.
@@ -13,7 +12,6 @@ This extension will display waveforms from the simulations.
 This extension will perform similarly to Surfer for waveform viewing.
 
 ## Project 4B: Vivado Workflow - Checking & Synthesis
-## Description:
 Project 4B seeks to create an extension in Visual Studio Code.
 This extension will perform error checking, syntax checking, and other checks in VHDL Code.
 This extension will perform Synthesis of VHDL Code for the Hardware Architecture.
