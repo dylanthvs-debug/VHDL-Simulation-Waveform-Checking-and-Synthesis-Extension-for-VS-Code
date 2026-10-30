@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "vhdl-course-workbench-vivado.helloWorld",
-        "title": "Hello World"
+        "command": "vhdl-course-workbench-vivado.runChecking",
+        "title": "Vivado: Run Checking"
       }
     ]
   },
