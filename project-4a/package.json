@@ -1,0 +1,27 @@
+{
+  "name": "vhdl-simulation-synthesis-extenstion",
+  "displayName": "VHDL Simulation and Synthesis",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "description": "ECNG 2007 - Computer Systems and Software Design\r Group 4\r Project 4A - Open Tools Workflow - GHDL & Surfer",
+  "main": "./out/extension.js",
+  "scripts": {
+    "vs.code:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.144.0",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
