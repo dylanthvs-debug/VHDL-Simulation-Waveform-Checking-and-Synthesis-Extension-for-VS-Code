@@ -2,7 +2,8 @@
   "name": "vhdl-course-workbench-vivado",
   "displayName": "VHDL Course Workbench - Vivado Workflow",
   "description": "Vivado checking and synthesis workflow for the VHDL Course Workbench",
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "publisher": "ecng2007-local",
   "engines": {
     "vscode": "^1.144.0"
   },
@@ -12,12 +13,67 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "P4B Experimental Development Prototype",
+      "properties": {
+        "p4b.experimental.enabled": {
+          "type": "boolean",
+          "default": false,
+          "scope": "machine",
+          "description": "Opt in to experimental Vivado procedures. NOT official course workflows. Requires a trusted local Windows workspace."
+        },
+        "p4b.experimental.executablePath": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Absolute path to your installed Vivado launcher (.bat, .cmd or .exe). No quotes or command arguments."
+        },
+        "p4b.experimental.topLevel": {
+          "type": "string",
+          "default": "",
+          "scope": "window",
+          "description": "Explicit basic VHDL entity name for experimental synthesis. No default is assumed."
+        },
+        "p4b.experimental.part": {
+          "type": "string",
+          "default": "",
+          "scope": "window",
+          "description": "Exact FPGA part installed and supported by your Vivado installation. Required for experimental synthesis; no default is assumed."
+        }
+      }
+    },
     "commands": [
       {
         "command": "vhdl-course-workbench-vivado.runChecking",
         "title": "Vivado: Run Checking"
+      },
+      {
+        "command": "vhdl-course-workbench-vivado.runSynthesis",
+        "title": "Vivado: Run Synthesis"
+      },
+      {
+        "command": "vhdl-course-workbench-vivado.openWorkflow",
+        "title": "Vivado: Open Workflow Sidebar"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vivadoWorkflow",
+          "title": "Vivado Workflow",
+          "icon": "media/vivado.svg"
+        }
+      ]
+    },
+    "views": {
+      "vivadoWorkflow": [
+        {
+          "type": "webview",
+          "id": "p4b.vivadoWorkflow",
+          "name": "Vivado Workflow"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -25,7 +81,14 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "node --test out/test/unit/*.test.js && vscode-test",
+    "pretest:unit": "npm run compile",
+    "test:unit": "node --test out/test/unit/*.test.js",
+    "pretest:extension": "npm run compile",
+    "test:extension": "vscode-test",
+    "prepackage:experimental": "npm run compile && npm run lint",
+    "package:experimental": "node scripts/package-experimental.cjs",
+    "verify:package": "node scripts/verify-package.cjs"
   },
   "devDependencies": {
     "@types/vscode": "^1.144.0",

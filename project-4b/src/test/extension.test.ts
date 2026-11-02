@@ -1,15 +1,36 @@
 import * as assert from 'assert';
 
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
 import * as vscode from 'vscode';
-// import * as myExtension from '../../extension';
 
-suite('Extension Test Suite', () => {
-	vscode.window.showInformationMessage('Start all tests.');
+// This host contains P4B only: activation exercises registerP4B without P4A.
+suite('Standalone P4B registration', () => {
+	test('activation registers the existing checking command through P4B', async () => {
+		const extension = vscode.extensions.all.find(
+			candidate => candidate.packageJSON.name === 'vhdl-course-workbench-vivado'
+		);
+		assert.ok(extension, 'The development extension must be installed in the test host.');
+		await extension.activate();
+		assert.strictEqual(extension.isActive, true);
+		const commands = await vscode.commands.getCommands(true);
+		assert.ok(commands.includes('vhdl-course-workbench-vivado.runChecking'));
+		// Executing also detects a missing handler, even if package.json contributes the command.
+		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		await vscode.commands.executeCommand('vhdl-course-workbench-vivado.runChecking');
+	});
 
-	test('Sample test', () => {
-		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
-		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
+	test('contributes and registers the synthesis command', async () => {
+		const extension = vscode.extensions.all.find(
+			candidate => candidate.packageJSON.name === 'vhdl-course-workbench-vivado'
+		);
+		assert.ok(extension);
+		await extension.activate();
+		const commandId = 'vhdl-course-workbench-vivado.runSynthesis';
+		assert.ok(extension.packageJSON.contributes.commands.some(
+			(command: { command: string; title: string }) =>
+				command.command === commandId && command.title === 'Vivado: Run Synthesis'
+		));
+		assert.ok((await vscode.commands.getCommands(true)).includes(commandId));
+		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		await vscode.commands.executeCommand(commandId);
 	});
 });

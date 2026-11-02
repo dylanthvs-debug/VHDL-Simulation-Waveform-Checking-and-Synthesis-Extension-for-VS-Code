@@ -1,0 +1,13 @@
+{
+  "name": "p4b-mock-test-harness",
+  "publisher": "local-tests",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.144.0" },
+  "main": "../../out/test/harness/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "vhdl-course-workbench-vivado.runChecking", "title": "Vivado: Run Checking" },
+      { "command": "vhdl-course-workbench-vivado.runSynthesis", "title": "Vivado: Run Synthesis" }
+    ]
+  }
+}

@@ -1,23 +1,21 @@
 import * as vscode from 'vscode';
+import { validateCheckingInput } from './checkingInput';
+import { executeWorkflow, notConfiguredMessage, writeWorkflowResult } from './workflow';
+import { NodeProcessRunner, ProcessRequest, ProcessRunner } from '../shared/processRunner';
 
-export function runChecking(output: vscode.OutputChannel): void {
+export async function runChecking(
+    output: Pick<vscode.OutputChannel, 'clear' | 'appendLine' | 'show'>,
+    configuration?: ProcessRequest,
+    runner: ProcessRunner = new NodeProcessRunner()
+): Promise<void> {
 
-    const editor = vscode.window.activeTextEditor;
-
-    // Make sure a saved file is open
-    if (!editor || editor.document.isUntitled ||
-        editor.document.uri.scheme !== 'file') {
-        vscode.window.showErrorMessage('Please open a saved VHDL file.');
+    const selection = validateCheckingInput(vscode.window.activeTextEditor?.document);
+    if (!selection.valid) {
+        vscode.window.showErrorMessage(selection.message);
         return;
     }
 
-    const filePath = editor.document.uri.fsPath;
-
-    // Check the file extension
-    if (!/\.vhdl?$/i.test(filePath)) {
-        vscode.window.showErrorMessage('This is not a VHDL file.');
-        return;
-    }
+    const filePath = selection.filePath;
 
     // Display checking information
     output.clear();
@@ -25,7 +23,13 @@ export function runChecking(output: vscode.OutputChannel): void {
     output.appendLine('---------------------------');
     output.appendLine('File: ' + filePath);
     output.appendLine('VHDL file recognized successfully.');
-    output.appendLine('Vivado execution not yet implemented.');
+    if (!configuration) {
+        output.appendLine('Vivado execution not yet implemented.');
+        output.appendLine(notConfiguredMessage);
+        output.show(true);
+        return;
+    }
 
     output.show(true);
+    writeWorkflowResult(output, await executeWorkflow(configuration, runner));
 }

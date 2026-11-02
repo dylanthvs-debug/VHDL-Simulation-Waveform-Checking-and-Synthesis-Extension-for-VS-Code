@@ -1,82 +1,49 @@
-ECNG 2007 - Computer Systems and Software Design
-Group 4
-Project 4B - Vivado Workflow - Checking and Synthesis
+# P4B - Vivado Workflow (development prototype)
 
-Project Description:
-Checking Component: Constant error checking and syntax checking for VHDL Code. 
-Synthesis Component: Converts VHDL Code into hardware representation made of digital logic components.
+ECNG2007, UWI, Group 4. TypeScript VS Code extension for checking and synthesis.
 
-This directory contains the information and work for ECNG 2007 Group 4B
+**Experimental development build, not a course-approved Vivado flow.**
+The official Local EDA Tool Manifest v1 and prescribed procedures remain pending.
+Real Vivado execution has not been verified on the development computer.
 
+**Vivado: Run Checking** and **Vivado: Run Synthesis** normally validate the active
+saved VHDL file and display an unconfigured message in **Vivado Workflow**. No tool
+executes by default. Existing command IDs remain unchanged.
 
-# vhdl-course-wovhdl-course-workbench-vivado README
+Explicitly enabling `p4b.experimental.enabled` opts into the Windows development
+prototype. It handles one saved source, with syntax-only checking or unconstrained
+synthesis. Synthesis requires an explicit top-level entity and FPGA part. There is
+no implementation, timing sign-off, bitstream generation or programming.
 
-This is the README for your extension "vhdl-course-wovhdl-course-workbench-vivado". After writing up a brief description, we recommend including the following sections.
+See [the portable testing guide](docs/EXPERIMENTAL-TESTING.md) for installation,
+settings, samples, limits, test checklist, log collection and AMD documentation.
 
-## Features
+## Vivado Workflow sidebar
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Open **Vivado: Open Workflow Sidebar** from the Command Palette, or click the chip
+icon in the Activity Bar. Browse to a saved VHDL file (opening it in the editor is
+not required), or choose **Use Active File**. Sidebar runs always use the displayed
+source, even when another editor is active.
 
-For example if there is an image subfolder under your extension project workspace:
+Browse to your Vivado launcher, supply the entity and exact FPGA part for synthesis,
+explicitly check **Enable experimental execution**, then **Save Configuration**.
+Choose **Run Checking** or **Run Synthesis**. Results show progress and completion
+or failure. **Show Output**, report buttons and **Open Run Folder** provide details.
+Execution remains disabled by default. Uncheck the enable box and save to disable it.
+The existing Command Palette checking and synthesis commands remain available.
 
-\!\[feature X\]\(images/feature-x.png\)
+## Local development
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- `npm test`: compile, lint, Node tests and both VS Code extension-host suites.
+- `npm run test:unit`: compile and run Node tests.
+- `npm run test:extension -- --label standard`: default and opt-in mock command tests.
+- `npm run test:extension -- --label mock-workflows`: generic injected workflow tests.
+- `npm run package:experimental`: build the VSIX and transfer ZIP under
+  `dist/experimental/`, using already-installed JSZip. No download, installation,
+  publication or upload is performed by the packaging script.
+- `npm run verify:package`: extract the built VSIX and verify activation and both
+  mock commands using the already-cached VS Code host, without installing the VSIX.
 
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+VS Code 1.144.0 or newer is required by the existing extension engine declaration.
+Runtime needs VS Code, Windows and the tester's own Vivado installation. Node/npm
+are needed for development, not for installing this VSIX.

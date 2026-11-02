@@ -1,6 +1,13 @@
 .vscode/**
 .vscode-test/**
 src/**
+out/test/**
+test-fixtures/**
+node_modules/**
+scripts/**
+dist/**
+**/.p4b-experimental/**
+test.vhd
 .gitignore
 .yarnrc
 vsc-extension-quickstart.md

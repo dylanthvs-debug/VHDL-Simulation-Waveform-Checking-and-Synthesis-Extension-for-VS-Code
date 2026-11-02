@@ -1,0 +1,13 @@
+body { padding: 16px; color: var(--vscode-foreground); font-family: var(--vscode-font-family); font-size: var(--vscode-font-size); }
+h1 { font-size: 20px; margin: 10px 0; } h2 { font-size: 14px; margin: 0 0 14px; } h2 span { margin-left: 8px; }
+p { line-height: 1.5; } section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--vscode-widget-border, var(--vscode-panel-border)); }
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; } label { display: block; margin: 12px 0 6px; }
+input[type=text], textarea { box-sizing: border-box; width: 100%; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--vscode-input-border, transparent); padding: 8px; font: inherit; }
+textarea { resize: vertical; } button { font: inherit; cursor: pointer; border: 1px solid transparent; padding: 8px 10px; background: var(--vscode-button-background); color: var(--vscode-button-foreground); margin-top: 8px; }
+button:hover { background: var(--vscode-button-hoverBackground); } button.secondary { background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground); } button.secondary:hover { background: var(--vscode-button-secondaryHoverBackground); }
+button:disabled { opacity: .55; cursor: default; } :focus-visible { outline: 2px solid var(--vscode-focusBorder); outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; } .row button { flex: 1; } .check { display: flex; gap: 8px; align-items: start; } input[type=checkbox] { accent-color: var(--vscode-focusBorder); }
+.hint, .muted, footer { font-size: 12px; color: var(--vscode-descriptionForeground); } .hint { margin: 8px 0; } .path, #summary, #error { overflow-wrap: anywhere; }
+.badge { border: 1px solid var(--vscode-editorWarning-foreground); color: var(--vscode-editorWarning-foreground); font-size: 10px; letter-spacing: 1px; padding: 3px 6px; }
+.error, [data-phase=failed] #phase { color: var(--vscode-errorForeground); } [data-phase=succeeded] #phase { color: var(--vscode-testing-iconPassed); } [data-phase=running] #phase { color: var(--vscode-progressBar-background); }
+.artifact { display: block; width: 100%; text-align: left; } footer { margin-top: 24px; } .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
