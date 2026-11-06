@@ -104,3 +104,38 @@ test('each run gets a fresh directory and cannot reuse an old success marker', a
     assert.equal(good.result.status, 'success');
     assert.equal(bad.result.status, 'failed');
 });
+
+for (const channel of ['stdout', 'stderr', 'syntax.rpt', 'vivado.log']) {
+    test(`Vivado 2026.1 syntax critical warning in ${channel} defeats exit zero and success marker`, async () => {
+        await writeFile(source, '-- mock');
+        const diagnostic = "CRITICAL WARNING: [HDL 9-1206] Syntax error near ';' [input.vhd:11]";
+        const fake: ProcessRunner = { run: async request => {
+            for (const [name, contents] of Object.entries({ 'status.txt': 'P4B_EXPERIMENTAL_SUCCESS checking', 'syntax.rpt': 'report', 'version.txt': 'mock' })) {
+                await writeFile(path.join(request.cwd!, name), contents);
+            }
+            if (channel.includes('.')) { await writeFile(path.join(request.cwd!, channel), diagnostic); }
+            return { status: 'success', exitCode: 0, signal: null,
+                stdout: channel === 'stdout' ? diagnostic : '', stderr: channel === 'stderr' ? diagnostic : '' };
+        } };
+        const run = await executeExperimental('checking', settings, source, root, fake);
+        assert.equal(run.result.status, 'failed');
+        assert.ok(run.result.message.includes(diagnostic));
+        // Preserve the actual process code; the adapter must not fabricate exit 1.
+        assert.equal(run.result.process?.exitCode, 0);
+    });
+}
+
+test('unrelated critical warnings do not fail valid checking', async () => {
+    await writeFile(source, '-- mock');
+    const fake: ProcessRunner = { run: async request => {
+        for (const [name, contents] of Object.entries({ 'status.txt': 'P4B_EXPERIMENTAL_SUCCESS checking', 'syntax.rpt': 'report', 'version.txt': 'mock' })) {
+            await writeFile(path.join(request.cwd!, name), contents);
+        }
+        return { status: 'success', exitCode: 0, signal: null, stdout: '', stderr: 'CRITICAL WARNING: [Other 1-1] Unrelated warning' };
+    } };
+    assert.equal((await executeExperimental('checking', settings, source, root, fake)).result.status, 'success');
+});
+
+test('missing source is rejected before process launch', async () => {
+    await assert.rejects(executeExperimental('checking', settings, path.join(directory, 'missing.vhd'), root, runner), /ENOENT/);
+});

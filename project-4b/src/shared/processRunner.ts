@@ -7,6 +7,8 @@ export interface ProcessRequest {
     cwd?: string;
     /** Used only by the experimental Windows batch adapter after strict validation. */
     windowsVerbatimArguments?: boolean;
+    /** Maximum execution time. Experimental Vivado runs use 30 minutes. */
+    timeoutMs?: number;
 }
 
 export interface ProcessResult {
@@ -47,6 +49,14 @@ export class NodeProcessRunner implements ProcessRunner {
                     windowsVerbatimArguments: request.windowsVerbatimArguments,
                     stdio: ['ignore', 'pipe', 'pipe']
                 });
+                const timer = request.timeoutMs ? setTimeout(() => {
+                    launchError = { code: 'ETIMEDOUT', message: `Process exceeded ${request.timeoutMs} ms and was terminated.` };
+                    if (process.platform === 'win32' && child.pid) {
+                        const killer = spawn(`${process.env.SystemRoot}\\System32\\taskkill.exe`, ['/pid', String(child.pid), '/t', '/f'], { windowsHide: true });
+                        killer.on('error', () => child.kill());
+                        killer.on('close', () => child.kill());
+                    } else { child.kill('SIGKILL'); }
+                }, request.timeoutMs) : undefined;
 
                 // Stream decoding preserves UTF-8 characters split across chunks.
                 child.stdout.setEncoding('utf8');
@@ -58,6 +68,7 @@ export class NodeProcessRunner implements ProcessRunner {
                 });
                 // close follows exit/error and waits until captured streams have closed.
                 child.on('close', (exitCode, signal) => {
+                    clearTimeout(timer);
                     resolve({
                         status: launchError ? 'launch-error' : exitCode === 0 && signal === null ? 'success' : 'failed',
                         stdout,

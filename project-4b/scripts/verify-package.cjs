@@ -10,7 +10,7 @@ async function main() {
     const area = path.join(root, '.vscode-test/packaged-verification');
     await fs.mkdir(area, { recursive: true });
     const extraction = await fs.mkdtemp(path.join(area, 'artifact-'));
-    const zip = await JSZip.loadAsync(await fs.readFile(path.join(root, `dist/experimental/p4b-experimental-${pkg.version}.vsix`)), { checkCRC32: true });
+    const zip = await JSZip.loadAsync(await fs.readFile(path.join(root, `dist/p4b-vivado-final-test-v${pkg.version}.vsix`)), { checkCRC32: true });
     for (const file of Object.values(zip.files)) {
         if (file.dir || !file.name.startsWith('extension/')) { continue; }
         const target = path.resolve(extraction, file.name);
@@ -29,7 +29,7 @@ async function main() {
     process.env.TEMP = temp;
     process.env.TMP = temp;
     process.env.NODE_DISABLE_COMPILE_CACHE = '1';
-    const executable = path.join(root, '.vscode-test/vscode-win32-x64-archive-1.144.0/Code.exe');
+    const executable = process.env.P4B_TEST_VSCODE ?? path.join(root, '.vscode-test/vscode-win32-x64-archive-1.144.0/Code.exe');
     await fs.access(executable); // No download fallback.
     await runTests({
         vscodeExecutablePath: executable,

@@ -15,6 +15,12 @@ proc p4b_run {kind body} {
         if {[get_msg_config -severity ERROR -count] > 0} {
             error "Vivado emitted ERROR messages; refusing to mark the run successful."
         }
+        # Vivado 2026.1 can emit this syntax error as a CRITICAL WARNING,
+        # including during read_vhdl rather than in check_syntax's return value.
+        # Query only the known syntax-error ID; unrelated warnings remain allowed.
+        if {[get_msg_config -id {HDL 9-1206} -count] > 0} {
+            error "Vivado emitted HDL 9-1206 syntax errors; see vivado.log for original file and line diagnostics."
+        }
         p4b_write status.txt "P4B_EXPERIMENTAL_SUCCESS $kind"
         puts "P4B_EXPERIMENTAL_SUCCESS $kind"
     } message options]

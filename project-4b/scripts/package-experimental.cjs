@@ -17,7 +17,7 @@ async function main() {
         'README.md', ...runtime, 'media/vivadoWorkflow.js', 'media/vivadoWorkflow.css', 'media/vivado.svg',
         'resources/experimental/common.tcl', 'resources/experimental/checking.tcl', 'resources/experimental/synthesis.tcl',
         'samples/experimental/valid.vhd', 'samples/experimental/invalid.vhd',
-        'docs/EXPERIMENTAL-TESTING.md', 'docs/TEST-RESULTS-TEMPLATE.md', 'docs/VERIFICATION.md'
+        'docs/EXPERIMENTAL-TESTING.md', 'docs/TEST-RESULTS-TEMPLATE.md', 'docs/VERIFICATION.md', 'docs/TECHNICAL.md', 'docs/FINAL-TESTING.md'
     ];
     const zip = new JSZip();
     const manifest = { ...pkg, displayName: pkg.displayName + ' (Experimental Prototype)' };
@@ -43,9 +43,9 @@ async function main() {
 <Default Extension="json" ContentType="application/json"/><Default Extension="js" ContentType="application/javascript"/>
 <Default Extension="md" ContentType="text/markdown"/><Default Extension="tcl" ContentType="text/plain"/><Default Extension="vhd" ContentType="text/plain"/>
 <Default Extension="vsixmanifest" ContentType="text/xml"/></Types>`);
-    const output = path.join(root, 'dist/experimental');
+    const output = path.join(root, 'dist');
     await fs.mkdir(output, { recursive: true });
-    const name = `p4b-experimental-${pkg.version}`;
+    const name = `p4b-vivado-final-test-v${pkg.version}`;
     const vsix = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
     await fs.writeFile(path.join(output, `${name}.vsix`), vsix);
     const verified = await JSZip.loadAsync(vsix, { checkCRC32: true });

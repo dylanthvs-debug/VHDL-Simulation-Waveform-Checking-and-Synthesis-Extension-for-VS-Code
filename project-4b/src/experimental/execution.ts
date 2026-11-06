@@ -106,7 +106,15 @@ export async function executeExperimental(
         // Preflight gives a useful missing-launcher diagnostic even for .bat files.
         if (!(await stat(settings.executablePath)).isFile()) { throw new Error('Launcher path is not a file.'); }
         request = experimentalLaunchRequest(settings.executablePath, driver, directory);
+        request.timeoutMs = 30 * 60 * 1000;
         result = await executeWorkflow(request, runner);
+        const diagnosticText = [result.process?.stdout ?? '', result.process?.stderr ?? '',
+            await readFile(path.join(directory, 'vivado.log'), 'utf8').catch(() => ''),
+            await readFile(path.join(directory, 'syntax.rpt'), 'utf8').catch(() => '')].join('\n');
+        const diagnostic = diagnosticText.split(/\r?\n/).find(line =>
+            /^\s*(?:ERROR:|P4B_EXPERIMENTAL_FAILURE)/i.test(line)
+            || /\[HDL 9-1206\]/i.test(line)
+            || /^\s*CRITICAL WARNING:.*\bSyntax error\b/i.test(line));
         if (result.status === 'success') {
             const marker = await readFile(path.join(directory, 'status.txt'), 'utf8').catch(() => '');
             const missing: string[] = [];
@@ -114,13 +122,15 @@ export async function executeExperimental(
                 const info = await stat(path.join(directory, name)).catch(() => undefined);
                 if (!info?.isFile() || info.size === 0) { missing.push(name); }
             }
-            const errors = /(?:^|\n)\s*(?:ERROR:|P4B_EXPERIMENTAL_FAILURE)/i.test(
-                (result.process?.stdout ?? '') + '\n' + (result.process?.stderr ?? ''));
+            const errors = Boolean(diagnostic);
             if (marker.trim() !== `P4B_EXPERIMENTAL_SUCCESS ${kind}` || missing.length || errors) {
                 result = { ...result, status: 'failed', message: `EXPERIMENTAL ${kind} not confirmed: completion marker/reports missing or error output detected. Missing reports: ${missing.join(', ') || 'none'}. Exit code alone is not sufficient.` };
             } else {
                 result = { ...result, message: `EXPERIMENTAL ${kind} procedure completed (exit code 0; marker and reports verified). Not an official course acceptance result.` };
             }
+        }
+        if (diagnostic && result.status !== 'success') {
+            result = { ...result, message: `${result.message}\n${diagnostic}` };
         }
     } catch (error) {
         result = { status: 'launch-error', message: `EXPERIMENTAL launch/setup failure: ${error instanceof Error ? error.message : String(error)}. Check the launcher path, directory permissions and Vivado installation.` };

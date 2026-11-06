@@ -7,7 +7,7 @@ p4b_run checking {
     p4b_write syntax.rpt "EXPERIMENTAL syntax-only report\n$diagnostics"
     puts $diagnostics
     # check_syntax may return diagnostics instead of raising a Tcl error.
-    if {[regexp -nocase {(^|\n)[ \t]*ERROR([ :\[]|$)} $diagnostics]} {
+    if {[regexp -nocase {(^|\n)[ \t]*ERROR([ :\[]|$)|\[HDL 9-1206\]|CRITICAL WARNING:[^\n]*Syntax error} $diagnostics]} {
         error "Syntax errors were returned by check_syntax; see syntax.rpt."
     }
 }

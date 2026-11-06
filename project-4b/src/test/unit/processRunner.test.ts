@@ -108,3 +108,11 @@ test('reports synchronous invalid-executable errors as launch errors', async () 
     assert.equal(result.exitCode, null);
     assert.match(result.error?.message ?? '', /Could not launch/);
 });
+
+test('terminates a hanging process and reports timeout instead of success', async () => {
+    const result = await runner.run({ executable: process.execPath,
+        args: ['-e', 'setInterval(() => {}, 1000)'], timeoutMs: 300 });
+    assert.notEqual(result.status, 'success');
+    assert.equal(result.error?.code, 'ETIMEDOUT');
+    assert.match(result.error.message, /terminated/);
+});

@@ -2,7 +2,7 @@
   "name": "vhdl-course-workbench-vivado",
   "displayName": "VHDL Course Workbench - Vivado Workflow",
   "description": "Vivado checking and synthesis workflow for the VHDL Course Workbench",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "ecng2007-local",
   "engines": {
     "vscode": "^1.144.0"

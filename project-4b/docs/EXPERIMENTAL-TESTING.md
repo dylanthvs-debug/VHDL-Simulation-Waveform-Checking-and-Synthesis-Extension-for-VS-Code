@@ -9,7 +9,7 @@ scripts are replaceable experimental code, not Local EDA Tool Manifest v1.
 
 ## Transfer and installation
 
-Transfer `p4b-experimental-0.0.3.zip` from `dist/experimental/`. Extract it completely
+Transfer `p4b-vivado-final-test-v0.0.4.zip` from `dist/`. Extract it completely
 into a writable folder on the friend's Windows computer. It contains the VSIX,
 source samples, Tcl scripts, this guide and a test-results template.
 
@@ -17,7 +17,7 @@ source samples, Tcl scripts, this guide and a test-results template.
    engine baseline, not a requirement on the Vivado version. If unavailable, report
    the VS Code version; do not blindly change the engine declaration.
 2. Open Extensions, choose `...`, then **Install from VSIX...**. Select the included
-   `p4b-experimental-0.0.3.vsix`. Reload the window if requested.
+   `p4b-vivado-final-test-v0.0.4.vsix`. Reload the window if requested.
 3. Disable other development copies of P4B in that window to avoid duplicate commands.
 4. Open the extracted folder as a trusted local workspace. Do not use WSL, SSH,
    remote development, or browser VS Code for this Windows prototype.
@@ -173,8 +173,8 @@ Do not delete your original source files.
 Single-file Windows prototype only: no external libraries, IP, multifile ordering,
 XDC inputs, project import, extended entity identifiers or board support. No Vivado
 version/device compatibility claim is made. Data paths are escaped as Tcl strings.
-Concurrent experimental invocations are blocked per host. No timeout or cancellation
-UI exists; handle a hung tool manually on the test computer. Keep VS Code open while
+Concurrent experimental invocations are blocked per host. A 30-minute timeout terminates the launcher and its Windows child processes. No cancellation
+UI exists; keep the run folder when investigating a timeout. Keep VS Code open while
 running. Logs are buffered and displayed at completion; large outputs consume memory.
 Never treat interrupted execution as success.
 
