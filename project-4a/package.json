@@ -1,23 +1,98 @@
 {
   "name": "vhdl-simulation-synthesis-extenstion",
   "displayName": "VHDL Simulation and Synthesis",
+  "description": "ECNG 2007 Group 4 - Project 4A Open Tools Workflow (GHDL and Surfer)",
   "version": "1.0.0",
+  "publisher": "ecng2007-group4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dylanthvs-debug/VHDL-Simulation-Waveform-Checking-and-Synthesis-Extension-for-VS-Code"
+  },
   "engines": {
-    "vscode": "^1.105.0"
+    "vscode": "^1.144.0"
   },
   "categories": [
     "Other"
   ],
-  "description": "ECNG 2007 - Computer Systems and Software Design\r Group 4\r Project 4A - Open Tools Workflow - GHDL & Surfer",
+  "activationEvents": [
+    "workspaceContains:**/*.vhd",
+    "workspaceContains:**/*.vhdl",
+    "onLanguage:vhdl"
+  ],
   "main": "./out/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "The extension runs GHDL and Surfer executables named by workspace settings, so it needs a trusted workspace."
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "p4a.runSimulation",
+        "title": "Run GHDL Simulation",
+        "category": "P4A"
+      }
+    ],
+    "configuration": {
+      "title": "P4A GHDL and Surfer",
+      "properties": {
+        "p4a.toolManifestPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the Local EDA Tool Manifest v1 (JSON). Used to locate GHDL and Surfer when p4a.ghdlPath / p4a.surferPath are empty. Relative paths are resolved from the workspace folder. %VARIABLE% references are expanded."
+        },
+        "p4a.ghdlPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional override: full path to ghdl.exe. Empty = use the tool manifest entry, then 'ghdl' on PATH."
+        },
+        "p4a.surferPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional override: full path to surfer.exe. Empty = use the tool manifest entry, then 'surfer' on PATH."
+        },
+        "p4a.sourceFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "inverter.vhd",
+            "inverter_tb.vhd"
+          ],
+          "description": "VHDL files passed to 'ghdl -a', in order, relative to the workspace folder."
+        },
+        "p4a.testbenchEntity": {
+          "type": "string",
+          "default": "inverter_tb",
+          "description": "Testbench entity elaborated with 'ghdl -e' and run with 'ghdl -r'."
+        },
+        "p4a.waveformFile": {
+          "type": "string",
+          "default": "waveform.vcd",
+          "description": "VCD file written by 'ghdl -r --vcd=...' and opened in Surfer, relative to the workspace folder."
+        }
+      }
+    }
+  },
   "scripts": {
-    "vs.code:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -p ./"
+    "watch": "tsc -watch -p ./",
+    "test:unit": "npm run compile && mocha --ui tdd \"out/test/unit/**/*.test.js\"",
+    "pretest": "npm run compile",
+    "test": "vscode-test",
+    "package": "vsce package"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "24.x",
     "@types/vscode": "^1.144.0",
-    "@types/node": "^26.6.6",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "@vscode/vsce": "^3.0.0",
+    "mocha": "^11.7.6",
     "typescript": "^7.0.2"
   },
   "keywords": [],
